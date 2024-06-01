@@ -1,0 +1,165 @@
+
+1.Finding the average score for each subject and the maximum score for each student.
+
+val scoreData = List(
+ ("Alice", "Math", 80),
+ ("Bob", "Math", 90),
+ ("Alice", "Science", 70),
+ ("Bob", "Science", 85),
+ ("Alice", "English", 75),
+ ("Bob", "English", 95)
+).toDF("Student", "Subject", "Score")
+
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("spark_pratice").getOrCreate()
+from pyspark.sql.functions import avg,max
+
+scoreData = [
+ ("Alice", "Math", 80),
+ ("Bob", "Math", 90),
+ ("Alice", "Science", 70),
+ ("Bob", "Science", 85),
+ ("Alice", "English", 75),
+ ("Bob", "English", 95)
+]
+
+scoreData_df = spark.createDataFrame(scoreData).toDF("Student", "Subject", "Score")
+
+average_score_df = scoreData_df.groupBy("Student").agg(avg("score").alias ("Avarage"))
+
+maximum_score_df = scoreData_df.groupBy("Student").agg(max("score").alias("Max_Score"))
+
+average_score_df.show()
+maximum_score_df.show()
+
+
+2.Finding the average rating for each movie and the total number of ratings for each movie.
+
+val ratingsData = List(
+ ("User1", "Movie1", 4.5),
+ ("User2", "Movie1", 3.5),
+ ("User3", "Movie2", 2.5),
+ ("User4", "Movie2", 3.0),
+ ("User1", "Movie3", 5.0),
+ ("User2", "Movie3", 4.0)
+).toDF("User", "Movie", "Rating")
+
+from pyspark.sql.functions import avg,max,count
+
+ratingsData =[
+ ("User1", "Movie1", 4.5),
+ ("User2", "Movie1", 3.5),
+ ("User3", "Movie2", 2.5),
+ ("User4", "Movie2", 3.0),
+ ("User1", "Movie3", 5.0),
+ ("User2", "Movie3", 4.0)
+]
+
+ratingsData_df = spark.createDataFrame(ratingsData).toDF("User", "Movie", "Rating")
+
+avg_ratingsData_df = ratingsData_df.groupBy("Movie").agg(avg("Rating").alias ("Avg_Rating"))
+
+avg_ratingsData_df.show()
++------+----------+
+| Movie|Avg_Rating|
++------+----------+
+|Movie2|      2.75|
+|Movie3|       4.5|
+|Movie1|       4.0|
++------+----------+
+
+total_number_of_ratings = ratingsData_df.groupBy("Movie").agg(count("Rating").alias ("total_no_of_rating"))
+
+total_number_of_ratings.show()
+
++------+------------------+
+| Movie|total_no_of_rating|
++------+------------------+
+|Movie2|                 2|
+|Movie3|                 2|
+|Movie1|                 2|
++------+------------------+
+
+
+3.Finding the minimum, maximum, and average temperature for each city in a weather dataset.
+val weatherData = List(
+ ("City1", "2022-01-01", 10.0),
+ ("City1", "2022-01-02", 8.5),
+ ("City1", "2022-01-03", 12.3),
+ ("City2", "2022-01-01", 15.2),
+ ("City2", "2022-01-02", 14.1),
+ ("City2", "2022-01-03", 16.8)
+).toDF("City", "Date", "Temperature")
+
+
+
+weatherData =[
+ ("City1", "2022-01-01", 10.0),
+ ("City1", "2022-01-02", 8.5),
+ ("City1", "2022-01-03", 12.3),
+ ("City2", "2022-01-01", 15.2),
+ ("City2", "2022-01-02", 14.1),
+ ("City2", "2022-01-03", 16.8)
+]
+
+weatherData_df= spark.createDataFrame(weatherData).toDF("City", "Date", "Temperature")
+
+result = weatherData_df.groupBy("City").agg(min("Temperature").alias("Min_Temperature"),max("Temperature").alias("Max_Temperature"),avg("Temperature").alias("Avg_Temperature"))
+
+
+result.show()
+
++-----+---------------+---------------+------------------+
+| City|Min_Temperature|Max_Temperature|   Avg_Temperature|
++-----+---------------+---------------+------------------+
+|City1|            8.5|           12.3|10.266666666666667|
+|City2|           14.1|           16.8|15.366666666666665|
++-----+---------------+---------------+------------------+
+
+
+
+4.Finding the average rating given by each user for each genre
+val ratingData = List(
+ ("User1", "Movie1", "Action", 4.5),
+ ("User1", "Movie2", "Drama", 3.5),
+ ("User1", "Movie3", "Comedy", 2.5),
+ ("User2", "Movie1", "Action", 3.0),
+ ("User2", "Movie2", "Drama", 4.0),
+ ("User2", "Movie3", "Comedy", 5.0),
+ ("User3", "Movie1", "Action", 5.0),
+ ("User3", "Movie2", "Drama", 4.5),
+ ("User3", "Movie3", "Comedy", 3.0)
+).toDF("User", "Movie", "Genre", "Rating")
+
+
+ratingData =[
+ ("User1", "Movie1", "Action", 4.5),
+ ("User1", "Movie2", "Drama", 3.5),
+ ("User1", "Movie3", "Comedy", 2.5),
+ ("User2", "Movie1", "Action", 3.0),
+ ("User2", "Movie2", "Drama", 4.0),
+ ("User2", "Movie3", "Comedy", 5.0),
+ ("User3", "Movie1", "Action", 5.0),
+ ("User3", "Movie2", "Drama", 4.5),
+ ("User3", "Movie3", "Comedy", 3.0)]
+
+ratingData_df = spark.createDataFrame(ratingData).toDF("User", "Movie", "Genre", "Rating")
+
+result = ratingData_df.groupBy("User","Genre").agg(avg("Rating").alias ("Avg_Rating"))
+
+result.show()
+
++-----+------+----------+
+| User| Genre|Avg_Rating|
++-----+------+----------+
+|User1|Comedy|       2.5|
+|User3|Action|       5.0|
+|User2| Drama|       4.0|
+|User1| Drama|       3.5|
+|User2|Comedy|       5.0|
+|User1|Action|       4.5|
+|User2|Action|       3.0|
+|User3|Comedy|       3.0|
+|User3| Drama|       4.5|
++-----+------+----------+
+
