@@ -163,3 +163,69 @@ result.show()
 |User3| Drama|       4.5|
 +-----+------+----------+
 
+
+5.Conditions:
+Price>150 : 150*0.9
+Price<=150:150
+
+val df = List(("Product A", 100), ("Product B", 200), ("Product C", 150)).toDF("product", "price"
+
+data = [("Product A", 100), ("Product B", 200), ("Product C", 150)]
+
+data_df = spark.createDataFrame(data).toDF("product","price")
+
+data_df.show()
+
++---------+-----+
+|  product|price|
++---------+-----+
+|Product A|  100|
+|Product B|  200|
+|Product C|  150|
++---------+-----+
+
+result = data_df.withColumn("price",when(col("price")>150,150*0.9).otherwise(150))
+
+result.show()
++---------+-----+
+|  product|price|
++---------+-----+
+|Product A|150.0|
+|Product B|135.0|
+|Product C|150.0|
++---------+-----+
+
+
+6.Write a Spark Program to get the data whose age is greater than 25 and name starts with C
+
+val df = List(("Alice", 25), ("Bob", 30), ("Charlie", 35)).toDF("name", "age")
+
+data = [("Alice", 25), ("Bob", 30), ("Charlie", 35)]
+df=spark.createDataFrame(data).toDF("name","age")
+
+filerted_df =df.filer(col("age")>25 & col("name").startwith("C"))
+filerted_df.show()
+
+7.write a spark code to or transform the code
+
+salary >5000   middleclass
+
+salry >1000    upper middleclass
+
+slary >20000   rich
+
+data = [
+	(101,5000),
+	(102,1000),
+	(103,20000)
+]
+
+df = spark.createDataFrame(data).toDF("empID",salary)
+
+result_df =
+
+df.withColumn("salary",when(col("salary")>=20000,"rich")
+.when(col("salary")>=5000,"middileclass").otherwise("upper middleclass"))
+
+result_df.show()
+
